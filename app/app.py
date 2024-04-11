@@ -15,15 +15,13 @@ from secrets import token_urlsafe
 from flask import Flask, render_template, flash, request
 from wtforms import Form, StringField, IntegerField, TextAreaField, validators
 from flask_table import Table, Col
-
+import json
 from .ipip import *
 
 # App config.
 
 # auto generate random key
 SECRET_KEY = token_urlsafe(32)
-
-# SECRET_KEY = 'm3wFUMcLUlsja33_pV-mkU4Uc2T8cxv3vuFJI3N52Ro'
 
 app = Flask(__name__)
 app.config.from_object(__name__)
@@ -185,6 +183,33 @@ def subnet_tool():
                             working_prefixlen=working_prefixlen,
                             form_title='Subnets')
 
+@app.route("/api", methods=['GET', 'POST'])
+def subnet_api_tool():
+    form = SubnetForm(request.form)
+    results = []
+
+    # must use the global keyword for these global variable
+    global working_ipv4
+    global working_prefixlen
+
+    print (form.errors)
+
+    if request.method == 'POST':
+        ipv4 = request.form['ipv4']
+        parentcidr = request.form['prefixlen']
+        childcidr = request.form['new_prefixlen']
+
+        if form.validate():
+        # Save the comment here.
+            cidr = ipv4 + '/' + str(parentcidr)
+
+            results = ip_subnet(cidr, int(childcidr), "no csv text")
+
+            #save the working address and prefix
+            working_ipv4 = ipv4
+            working_prefixlen = parentcidr
+
+    return json.dumps(results)
 
 @app.route("/subnet-csv", methods=['GET', 'POST'])
 def subnet_csv_tool():
