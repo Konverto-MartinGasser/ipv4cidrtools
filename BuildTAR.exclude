@@ -1,0 +1,8 @@
+.git
+.gitignore
+.vscode
+BuildTar.bat
+BuildTAR.exclude
+demo_cache.sqlite
+Files
+__pycache__

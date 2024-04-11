@@ -1,25 +1,32 @@
-# Comment these out if deploy via Openshift web
-# FROM python:3.8-slim
-# LABEL version="1.0"
-# LABEL app="cidrtools"
-# LABEL maintaner="https://github.com/ja3600/cidrtools.git"
+#humschi/cidrtools:alpine-3.19.1
+FROM alpine:3.19.1
 
-RUN mkdir /app
-COPY app/* /app
-ADD requirements.txt /requirements.txt
-RUN pip3 install --no-cache-dir -r requirements.txt
+ENV PUID="2001" \
+    PGID="2001" \
+    TZ=Europe/Rome \
+    workdir=/usr/src/app/ \
+    startScript=start.sh
+
+WORKDIR $workdir
+
+COPY app/* $workdir
+COPY requirements.txt /requirements.txt
+
+RUN apk -U --no-cache --no-progress upgrade; \
+    apk add --update-cache --upgrade --no-cache --no-progress bash git nano python3 py3-pip py3-wheel tzdata; \
+    cp /usr/share/zoneinfo/$TZ /etc/localtime; \
+    ln -s /usr/bin/python3 /usr/bin/python; \
+    python3 -m venv ${workdir}; \
+    . ${workdir}/bin/activate; \
+    pip3 install --upgrade pip ;\
+    pip3 install requests; \
+    pip3 install --no-cache-dir -r /requirements.txt; \
+    chown -R ${PUID}:${PGID} ${workdir}; \
+    # Check for start.sh and make it executable
+    if [ -f ${startScript} ]; then chmod a+x ${startScript}; fi
+
+USER ${PUID}:${PGID}
+
 EXPOSE 5000
-USER 1001
-WORKDIR /app
+ENTRYPOINT ["/bin/sh", "-c"]
 CMD ["python", "app.py", "5000"]
-
-#RUN chmod +x ./entrypoint.sh
-#ENTRYPOINT ["sh", "entrypoint.sh"]
-
-
-# Use for development
-# COPY . /app
-# WORKDIR /app
-# RUN pip3 install --no-cache-dir -r requirements.txt
-# EXPOSE 5000
-# ENTRYPOINT [ "python", "app/app.py" ]

@@ -16,7 +16,7 @@ from flask import Flask, render_template, flash, request
 from wtforms import Form, StringField, IntegerField, TextAreaField, validators
 from flask_table import Table, Col
 import json
-from .ipip import *
+from ipip import *
 
 # App config.
 
