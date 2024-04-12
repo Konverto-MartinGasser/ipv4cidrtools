@@ -6,3 +6,8 @@ BuildTAR.exclude
 demo_cache.sqlite
 Files
 __pycache__
+7zip
+Include
+Lib
+Scripts
+pyvenv.cfg
