@@ -139,6 +139,54 @@ def disect_tool():
                             working_prefixlen=working_prefixlen,
                             form_title='Disector')
 
+@app.route("/api", methods=['GET', 'POST'])
+def disect_api():
+    if request.method == 'POST':
+        if request.is_json:
+            data = request.json
+            results = ip_disector(data.get('cidr'))
+            return josn.dumps(results)
+    # form = BaseForm(request.form)
+    # results = []
+    # table_results = []
+
+    # # must use the global keyword for these global variable
+    # global working_ipv4
+    # global working_prefixlen
+
+    # print (form.errors)
+
+    # if request.method == 'POST':
+    #     ipv4 = request.form['ipv4']
+    #     prefixlen = request.form['prefixlen']
+
+    #     if form.validate():
+    #     # Save the comment here.
+    #         cidr = ipv4 + '/' + str(prefixlen)
+
+    #         flash('Results for ' + cidr)
+
+    #         results = ip_disector(cidr)
+
+    #         # Create a table from the returned dictionary of items
+    #         table_results = TwoColTable(results)
+    #         #print(table_results.__html__())
+
+    #         #save the working address and prefix
+    #         working_ipv4 = ipv4
+    #         working_prefixlen = prefixlen
+
+    #     else:
+    #         flash('Error: Invalid input!')
+
+    # return render_template('base_form.html',
+    #                         form=form,
+    #                         results=table_results,
+    #                         working_ipv4=working_ipv4,
+    #                         working_prefixlen=working_prefixlen,
+    #                         form_title='Disector')
+
+
 
 @app.route("/subnet", methods=['GET', 'POST'])
 def subnet_tool():
@@ -182,34 +230,6 @@ def subnet_tool():
                             working_ipv4=working_ipv4,
                             working_prefixlen=working_prefixlen,
                             form_title='Subnets')
-
-@app.route("/api", methods=['GET', 'POST'])
-def subnet_api_tool():
-    form = SubnetForm(request.form)
-    results = []
-
-    # must use the global keyword for these global variable
-    global working_ipv4
-    global working_prefixlen
-
-    print (form.errors)
-
-    if request.method == 'POST':
-        ipv4 = request.form['ipv4']
-        parentcidr = request.form['prefixlen']
-        childcidr = request.form['new_prefixlen']
-
-        if form.validate():
-        # Save the comment here.
-            cidr = ipv4 + '/' + str(parentcidr)
-
-            results = ip_subnet(cidr, int(childcidr), "no csv text")
-
-            #save the working address and prefix
-            working_ipv4 = ipv4
-            working_prefixlen = parentcidr
-
-    return json.dumps(results)
 
 @app.route("/subnet-csv", methods=['GET', 'POST'])
 def subnet_csv_tool():

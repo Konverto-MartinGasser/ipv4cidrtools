@@ -1,13 +1,3 @@
-__pycache__/
-*.py[cod]
-*$py.class
-
-# C extensions
-*.so
-
-# Flask stuff:
-instance/
-.webassets-cache
-
-# bootstrap static files
-static/
+Include
+Lib
+Scripts

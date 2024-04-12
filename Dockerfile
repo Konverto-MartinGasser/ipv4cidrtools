@@ -5,12 +5,14 @@ ENV PUID="2001" \
     PGID="2001" \
     TZ=Europe/Rome \
     workdir=/usr/src/app/ \
+    PATH=/${workdir}/bin:$PATH \
     startScript=start.sh
 
-WORKDIR $workdir
+WORKDIR ${workdir}
 
-COPY app/* $workdir
+COPY app/* ${workdir}
 COPY requirements.txt /requirements.txt
+COPY ${startScript} ${workdir}/${startScript}
 
 RUN apk -U --no-cache --no-progress upgrade; \
     apk add --update-cache --upgrade --no-cache --no-progress bash git nano python3 py3-pip py3-wheel tzdata; \
@@ -29,4 +31,4 @@ USER ${PUID}:${PGID}
 
 EXPOSE 5000
 ENTRYPOINT ["/bin/sh", "-c"]
-CMD ["python", "app.py", "5000"]
+CMD ["${workdir}${startScript}"]
